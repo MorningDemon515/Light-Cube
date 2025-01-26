@@ -12,7 +12,12 @@ SDL_GLContext glc;
 
 ShaderFromFile* shader;
 ShaderFromFile* lightshader;
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, FPS);
+
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+float lastX = WIDTH / 2.0f;
+float lastY = HEIGHT / 2.0f;
+bool firstMouse = true;
+
 glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
 int main()
@@ -197,9 +202,28 @@ int main()
                 float xpos = static_cast<float>(px);
                 float ypos = static_cast<float>(py);
 
-                camera.processMouseMovement(event.motion.xrel, -event.motion.yrel);
+                if (firstMouse)
+                {
+                    lastX = xpos;
+                    lastY = ypos;
+                    firstMouse = false;
+                }
 
-         }
+                float xoffset = xpos - lastX;
+                float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+                lastX = xpos;
+                lastY = ypos;
+
+                camera.ProcessMouseMovement(xoffset, yoffset);
+
+        }
+
+        if(event.type == SDL_MOUSEWHEEL)
+        {
+            int py = event.wheel.y;
+            camera.ProcessMouseScroll(static_cast<float>(py));
+        }
 
         if(event.type == SDL_KEYDOWN)
         {
@@ -213,22 +237,22 @@ int main()
         const Uint8* state = SDL_GetKeyboardState(NULL);
         if (state[SDL_SCANCODE_W] )
         {
-            camera.processKeyboard(static_cast<SDL_Scancode>(SDL_SCANCODE_W), deltaTime);
+            camera.ProcessKeyboard(FORWARD, deltaTime);
         }
 
         if(state[SDL_SCANCODE_S])
         {
-            camera.processKeyboard(static_cast<SDL_Scancode>(SDL_SCANCODE_S), deltaTime);
+            camera.ProcessKeyboard(BACKWARD, deltaTime);
         }
 
         if(state[SDL_SCANCODE_A] )
         {
-            camera.processKeyboard(static_cast<SDL_Scancode>(SDL_SCANCODE_A), deltaTime);
+            camera.ProcessKeyboard(LEFT, deltaTime);
         }
 
         if(state[SDL_SCANCODE_D])
         {
-            camera.processKeyboard(static_cast<SDL_Scancode>(SDL_SCANCODE_D), deltaTime);
+            camera.ProcessKeyboard(RIGHT, deltaTime);
         }
         
         glClearColor(0.0f,0.0f,0.0f,1.0f);
@@ -239,7 +263,10 @@ int main()
         shader->Use();
         glUniform3fv(shader->GetShaderSourceUniform("light.position"),1,&lightPos[0]);
         //glUniform3f(shader->GetShaderSourceUniform("light.direction"), -0.2f, -1.0f, -0.3f);
-        glUniform3fv(shader->GetShaderSourceUniform("viewPos"),1,&camera.cp[0]);
+        glUniform3fv(shader->GetShaderSourceUniform("viewPos"),1,&camera.Position[0]);
+        glUniform3fv(shader->GetShaderSourceUniform("light.direction"), 1,&camera.Front[0]);
+        glUniform1f(shader->GetShaderSourceUniform("light.cutOff"), glm::cos(glm::radians(12.5f)));
+        glUniform1f(shader->GetShaderSourceUniform("light.outerCutOff"), glm::cos(glm::radians(17.5f)));
 
         // light properties
         glUniform3f(shader->GetShaderSourceUniform("light.ambient"), 0.2f, 0.2f, 0.2f);
@@ -254,7 +281,7 @@ int main()
         glUniform1f(shader->GetShaderSourceUniform("material.shininess"), 64.0f);
 
         glm::mat4 model = glm::mat4(1.0f);
-        glm::mat4 view = camera.getViewMatrix();
+        glm::mat4 view = camera.GetViewMatrix();
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
 
         glUniformMatrix4fv(shader->GetShaderSourceUniform("model"),1,GL_FALSE,&model[0][0]);
