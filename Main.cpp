@@ -99,6 +99,14 @@ int main()
         glm::vec3(-1.3f,  1.0f, -1.5f)
     };
 
+    // positions of the point lights
+    glm::vec3 pointLightPositions[] = {
+        glm::vec3( 0.7f,  0.2f,  2.0f),
+        glm::vec3( 2.3f, -3.3f, -4.0f),
+        glm::vec3(-4.0f,  2.0f, -12.0f),
+        glm::vec3( 0.0f,  0.0f, -3.0f)
+    };
+
     GLuint VAO,VBO;
     glGenBuffers(1,&VBO);
     glGenVertexArrays(1,&VAO);
@@ -261,28 +269,58 @@ int main()
 
         // be sure to activate shader when setting uniforms/drawing objects
         shader->Use();
-        glUniform3fv(shader->GetShaderSourceUniform("light.position"),1,&lightPos[0]);
-        //glUniform3f(shader->GetShaderSourceUniform("light.direction"), -0.2f, -1.0f, -0.3f);
-        glUniform3fv(shader->GetShaderSourceUniform("viewPos"),1,&camera.Position[0]);
-        glUniform3fv(shader->GetShaderSourceUniform("light.direction"), 1,&camera.Front[0]);
-        glUniform1f(shader->GetShaderSourceUniform("light.cutOff"), glm::cos(glm::radians(12.5f)));
-        glUniform1f(shader->GetShaderSourceUniform("light.outerCutOff"), glm::cos(glm::radians(17.5f)));
-
-        // light properties
-        glUniform3f(shader->GetShaderSourceUniform("light.ambient"), 0.2f, 0.2f, 0.2f);
-        glUniform3f(shader->GetShaderSourceUniform("light.diffuse"), 0.5f, 0.5f, 0.5f);
-        glUniform3f(shader->GetShaderSourceUniform("light.specular"), 1.0f, 1.0f, 1.0f);
-        glUniform1f(shader->GetShaderSourceUniform("light.constant"), 1.0f);
-        glUniform1f(shader->GetShaderSourceUniform("light.linear"), 0.09f);
-        glUniform1f(shader->GetShaderSourceUniform("light.quadratic"), 0.032f);
-
-        // material properties
-        glUniform3f(shader->GetShaderSourceUniform("material.specular"), 0.5f, 0.5f, 0.5f);
-        glUniform1f(shader->GetShaderSourceUniform("material.shininess"), 64.0f);
+        // directional light
+        glUniform3f(shader->GetShaderSourceUniform("dirLight.direction"), -0.2f, -1.0f, -0.3f);
+        glUniform3f(shader->GetShaderSourceUniform("dirLight.ambient"), 0.05f, 0.05f, 0.05f);
+        glUniform3f(shader->GetShaderSourceUniform("dirLight.diffuse"), 0.4f, 0.4f, 0.4f);
+        glUniform3f(shader->GetShaderSourceUniform("dirLight.specular"), 0.5f, 0.5f, 0.5f);
+        // point light 1
+        glUniform3fv(shader->GetShaderSourceUniform("pointLights[0].position"),1,&(pointLightPositions[0])[0]);
+        glUniform3f(shader->GetShaderSourceUniform("pointLights[0].ambient"), 0.05f, 0.05f, 0.05f);
+        glUniform3f(shader->GetShaderSourceUniform("pointLights[0].diffuse"), 0.8f, 0.8f, 0.8f);
+        glUniform3f(shader->GetShaderSourceUniform("pointLights[0].specular"), 1.0f, 1.0f, 1.0f);
+        glUniform1f(shader->GetShaderSourceUniform("pointLights[0].constant"), 1.0f);
+        glUniform1f(shader->GetShaderSourceUniform("pointLights[0].linear"), 0.09f);
+        glUniform1f(shader->GetShaderSourceUniform("pointLights[0].quadratic"), 0.032f);
+        // point light 2
+        glUniform3fv(shader->GetShaderSourceUniform("pointLights[1].position"),1,&(pointLightPositions[1])[0]);
+        glUniform3f(shader->GetShaderSourceUniform("pointLights[1].ambient"), 0.05f, 0.05f, 0.05f);
+        glUniform3f(shader->GetShaderSourceUniform("pointLights[1].diffuse"), 0.8f, 0.8f, 0.8f);
+        glUniform3f(shader->GetShaderSourceUniform("pointLights[1].specular"), 1.0f, 1.0f, 1.0f);
+        glUniform1f(shader->GetShaderSourceUniform("pointLights[1].constant"), 1.0f);
+        glUniform1f(shader->GetShaderSourceUniform("pointLights[1].linear"), 0.09f);
+        glUniform1f(shader->GetShaderSourceUniform("pointLights[1].quadratic"), 0.032f);
+        // point light 3
+        glUniform3fv(shader->GetShaderSourceUniform("pointLights[2].position"),1,&(pointLightPositions[2])[0]);
+        glUniform3f(shader->GetShaderSourceUniform("pointLights[2].ambient"), 0.05f, 0.05f, 0.05f);
+        glUniform3f(shader->GetShaderSourceUniform("pointLights[2].diffuse"), 0.8f, 0.8f, 0.8f);
+        glUniform3f(shader->GetShaderSourceUniform("pointLights[2].specular"), 1.0f, 1.0f, 1.0f);
+        glUniform1f(shader->GetShaderSourceUniform("pointLights[2].constant"), 1.0f);
+        glUniform1f(shader->GetShaderSourceUniform("pointLights[2].linear"), 0.09f);
+        glUniform1f(shader->GetShaderSourceUniform("pointLights[2].quadratic"), 0.032f);
+        // point light 4
+        glUniform3fv(shader->GetShaderSourceUniform("pointLights[3].position"),1,&(pointLightPositions[3])[0]);
+        glUniform3f(shader->GetShaderSourceUniform("pointLights[3].ambient"), 0.05f, 0.05f, 0.05f);
+        glUniform3f(shader->GetShaderSourceUniform("pointLights[3].diffuse"), 0.8f, 0.8f, 0.8f);
+        glUniform3f(shader->GetShaderSourceUniform("pointLights[3].specular"), 1.0f, 1.0f, 1.0f);
+        glUniform1f(shader->GetShaderSourceUniform("pointLights[3].constant"), 1.0f);
+        glUniform1f(shader->GetShaderSourceUniform("pointLights[3].linear"), 0.09f);
+        glUniform1f(shader->GetShaderSourceUniform("pointLights[3].quadratic"), 0.032f);
+        // spotLight
+        glUniform3fv(shader->GetShaderSourceUniform("spotLight.position"),1,&camera.Position[0]);
+        glUniform3fv(shader->GetShaderSourceUniform("spotLight.direction"),1,&camera.Front[0]);
+        glUniform3f(shader->GetShaderSourceUniform("spotLight.ambient"), 0.0f, 0.0f, 0.0f);
+        glUniform3f(shader->GetShaderSourceUniform("spotLight.diffuse"), 1.0f, 1.0f, 1.0f);
+        glUniform3f(shader->GetShaderSourceUniform("spotLight.specular"), 1.0f, 1.0f, 1.0f);
+        glUniform1f(shader->GetShaderSourceUniform("spotLight.constant"), 1.0f);
+        glUniform1f(shader->GetShaderSourceUniform("spotLight.linear"), 0.09f);
+        glUniform1f(shader->GetShaderSourceUniform("spotLight.quadratic"), 0.032f);
+        glUniform1f(shader->GetShaderSourceUniform("spotLight.cutOff"), glm::cos(glm::radians(12.5f)));
+        glUniform1f(shader->GetShaderSourceUniform("spotLight.outerCutOff"), glm::cos(glm::radians(15.0f)));  
 
         glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 view = camera.GetViewMatrix();
-        glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
+        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
 
         glUniformMatrix4fv(shader->GetShaderSourceUniform("model"),1,GL_FALSE,&model[0][0]);
         glUniformMatrix4fv(shader->GetShaderSourceUniform("view"),1,GL_FALSE,&view[0][0]);
@@ -304,7 +342,6 @@ int main()
             float angle = 20.0f * i;
             model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
             glUniformMatrix4fv(shader->GetShaderSourceUniform("model"),1,GL_FALSE,&model[0][0]);
-
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
@@ -312,13 +349,15 @@ int main()
         lightshader->Use();
         glUniformMatrix4fv(lightshader->GetShaderSourceUniform("view"),1,GL_FALSE,&view[0][0]);
         glUniformMatrix4fv(lightshader->GetShaderSourceUniform("projection"),1,GL_FALSE,&projection[0][0]);
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, lightPos);
-        model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
-        glUniformMatrix4fv(lightshader->GetShaderSourceUniform("model"),1,GL_FALSE,&model[0][0]);
-
         glBindVertexArray(lightCubeVAO);
-        glDrawArrays(GL_TRIANGLES,0,36);
+         for (unsigned int i = 0; i < 4; i++)
+         {
+             model = glm::mat4(1.0f);
+             model = glm::translate(model, pointLightPositions[i]);
+             model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
+             glUniformMatrix4fv(lightshader->GetShaderSourceUniform("model"),1,GL_FALSE,&model[0][0]);
+             glDrawArrays(GL_TRIANGLES, 0, 36);
+         }
 
         SDL_GL_SwapWindow(window);
     }
