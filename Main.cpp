@@ -237,14 +237,17 @@ int main()
 
         // be sure to activate shader when setting uniforms/drawing objects
         shader->Use();
-       // glUniform3fv(shader->GetShaderSourceUniform("light.position"),1,&lightPos[0]);
-        glUniform3f(shader->GetShaderSourceUniform("light.direction"), -0.2f, -1.0f, -0.3f);
+        glUniform3fv(shader->GetShaderSourceUniform("light.position"),1,&lightPos[0]);
+        //glUniform3f(shader->GetShaderSourceUniform("light.direction"), -0.2f, -1.0f, -0.3f);
         glUniform3fv(shader->GetShaderSourceUniform("viewPos"),1,&camera.cp[0]);
 
         // light properties
         glUniform3f(shader->GetShaderSourceUniform("light.ambient"), 0.2f, 0.2f, 0.2f);
         glUniform3f(shader->GetShaderSourceUniform("light.diffuse"), 0.5f, 0.5f, 0.5f);
         glUniform3f(shader->GetShaderSourceUniform("light.specular"), 1.0f, 1.0f, 1.0f);
+        glUniform1f(shader->GetShaderSourceUniform("light.constant"), 1.0f);
+        glUniform1f(shader->GetShaderSourceUniform("light.linear"), 0.09f);
+        glUniform1f(shader->GetShaderSourceUniform("light.quadratic"), 0.032f);
 
         // material properties
         glUniform3f(shader->GetShaderSourceUniform("material.specular"), 0.5f, 0.5f, 0.5f);
